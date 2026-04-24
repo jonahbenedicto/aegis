@@ -1,0 +1,37 @@
+from fastapi import FastAPI
+from app.routers import users
+from app.core.database import create_all
+from fastapi.middleware.cors import CORSMiddleware
+
+
+app = FastAPI(
+    title="Aegis API", 
+    version="0.0.1"
+)
+
+
+origins = [
+    "http://chrome-extension://*",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(users.router)
+
+
+@app.on_event("startup")
+def on_startup():
+    create_all()
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
