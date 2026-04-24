@@ -1,7 +1,7 @@
 services:
-  postgres_db:
+  db:
     image: postgres:15-alpine
-    container_name: local_postgres_db
+    container_name: aegis_db
     restart: always
     environment:
       POSTGRES_USER: aegis_user

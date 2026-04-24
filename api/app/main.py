@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from app.routers import users
-from app.core.database import create_all
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -25,11 +24,6 @@ app.add_middleware(
 
 
 app.include_router(users.router)
-
-
-@app.on_event("startup")
-def on_startup():
-    create_all()
 
 
 @app.get("/health")
