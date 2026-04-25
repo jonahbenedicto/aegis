@@ -14,7 +14,6 @@ def get_current_user(
     session: Session = Depends(get_session),
 ) -> User:
     try:
-        # Explicitly require an access token — refresh tokens are rejected here.
         username = decode_token(token, expected_type="access")
     except JWTError:
         raise HTTPException(

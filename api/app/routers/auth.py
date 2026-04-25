@@ -56,7 +56,6 @@ def login(
 
 @router.post("/refresh", response_model=AccessToken)
 def refresh(body: RefreshRequest):
-    # Token is received in the request body, never in the URL.
     try:
         username = decode_token(body.refresh_token, expected_type="refresh")
     except JWTError:
