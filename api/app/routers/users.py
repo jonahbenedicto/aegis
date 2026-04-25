@@ -1,28 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
-from app.core.database import get_session
-from app.models.user import User
-from app.schemas.user import UserCreate, UserRead
 
+from app.core.database import get_session
+from app.core.dependencies import get_current_user
+from app.models.user import User
+from app.schemas.user import UserRead
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.post("/", response_model=UserRead)
-def create_user(user_in: UserCreate, session: Session = Depends(get_session)):
-    if session.exec(select(User).where(User.email == user_in.email)).first():
-        raise HTTPException(status_code=400, detail="Email already taken")
-    if session.exec(select(User).where(User.username == user_in.username)).first():
-        raise HTTPException(status_code=400, detail="Username already taken")
-    user = User(
-        email=user_in.email,
-        name=user_in.name,
-        username=user_in.username,
-        hashed_password=user_in.password,
-    )
-    session.add(user)
-    session.commit()
-    session.refresh(user)
+@router.get("/me", response_model=UserRead)
+def me(user: User = Depends(get_current_user)):
     return user
 
 
@@ -30,13 +18,10 @@ def create_user(user_in: UserCreate, session: Session = Depends(get_session)):
 def get_user(user_id: int, session: Session = Depends(get_session)):
     user = session.get(User, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
 
 
 @router.get("/", response_model=list[UserRead])
 def list_users(session: Session = Depends(get_session)):
-    users = session.exec(select(User)).all()
-    if not users:
-        raise HTTPException(status_code=404, detail="No users found")
-    return users
+    return session.exec(select(User)).all()

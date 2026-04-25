@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import users
+from app.routers import users, auth
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -17,7 +17,9 @@ app.add_middleware(
 )
 
 
+app.include_router(auth.router)
 app.include_router(users.router)
+
 
 
 @app.get("/health")

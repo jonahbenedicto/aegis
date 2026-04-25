@@ -3,3 +3,6 @@ sqlmodel
 psycopg2-binary
 alembic
 uvicorn
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart

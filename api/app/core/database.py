@@ -1,13 +1,7 @@
 from sqlmodel import create_engine, Session
-import os
-from dotenv import load_dotenv
+from app.core.config import DATABASE_URL
 
-
-load_dotenv()
-
-
-engine = create_engine(os.getenv("DATABASE_URL"))
-
+engine = create_engine(DATABASE_URL)
 
 def get_session():
     with Session(engine) as session:
